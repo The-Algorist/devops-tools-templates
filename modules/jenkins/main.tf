@@ -9,12 +9,13 @@ terraform {
 }
 
 provider "aws" {
-    region = "us-east-1"
+    region = "us-west-1"
+    profile = "gideon_warui"
 }
 
 resource "aws_instance" "jenkins" {
-    ami = "ami-0c55b159cbfafe1f0"
-    instance_type = "t2.micro"
+    ami = "ami-0f960def03d1071d3"
+    instance_type = "t2.medium"
     tags = {
         Name = "jenkins"
     }
@@ -22,10 +23,10 @@ resource "aws_instance" "jenkins" {
     user_data = <<EOF
         #!/bin/bash
         sudo yum update -y
-        sudo yum install java-1.8.0 -y
+        sudo dnf install java-17-amazon-corretto -y
         sudo yum install wget -y
-        sudo wget -O /etc/yum.repos.d/jenkins.repo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        sudo rpm --import XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        sudo wget -O /etc/yum.repos.d/jenkins.repo \https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
         sudo yum upgrade -y
         sudo yum install jenkins -y
         sudo systemctl daemon-reload
@@ -37,7 +38,6 @@ resource "aws_instance" "jenkins" {
 
 resource "aws_security_group" "jenkins" {
     name = "jenkins"
-    vpc_id = "vpc-0c1f3d3b3d3b3d3b3"
     ingress {
         from_port = 22
         to_port = 22
@@ -67,8 +67,8 @@ resource "aws_security_group" "jenkins" {
     }
 }
 
-resource "aws_s3_bucket" "jenkins-artifacts" {
-    bucket = "jenkins-artifacts"
+resource "aws_s3_bucket" "jenkins-artifacts-test-yakwetu" {
+    bucket = "jenkins-artifacts-test-yakwetu"
 }
 
 
